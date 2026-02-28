@@ -75,12 +75,23 @@ exports.getMyBookings = async (req, res) => {
 };
 
 exports.getAllBookings = async (req, res) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = 25;
+  const startIndex = (page - 1) * limit;
+
+  const total = await Booking.countDocuments();
+
   const bookings = await Booking.find()
     .populate("user")
-    .populate("provider");
+    .populate("provider")
+    .skip(startIndex)
+    .limit(limit);
 
   res.status(200).json({
     success: true,
+    page,
+    totalPages: Math.ceil(total / limit),
+    total,
     count: bookings.length,
     data: bookings
   });
