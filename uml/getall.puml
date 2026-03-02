@@ -1,0 +1,32 @@
+@startuml
+title Manage Booking (GET ALL)
+
+actor Client
+
+participant "JavaScript\n:server" as Server
+participant "«router»\n:bookings" as Router
+participant "«controller»\n:bookings" as Controller
+participant "«model»\n:Booking" as BookingModel
+database "«MongoDB»\n:database" as DB
+
+Client -> Server : req.get(/api/v1/bookings?page=1)
+Server -> Router : app.use(/api/v1/bookings)
+Router -> Controller : getAllBookings(req,res)
+
+' ===== Count Total Documents =====
+Controller -> BookingModel : countDocuments()
+BookingModel -> DB : count()
+DB --> BookingModel : total count
+BookingModel --> Controller : total
+
+' ===== Fetch Paginated Data =====
+Controller -> BookingModel : find().skip().limit()
+BookingModel -> DB : find with pagination
+DB --> BookingModel : booking list
+BookingModel --> Controller : bookings[]
+
+Controller --> Router : 200 OK (JSON + pagination)
+Router --> Server : response
+Server --> Client : JSON success
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+title Manage Booking (GET ONE)
+
+actor Client
+
+participant "JavaScript\n:server" as Server
+participant "«router»\n:bookings" as Router
+participant "«controller»\n:bookings" as Controller
+participant "«model»\n:Booking" as BookingModel
+database "«MongoDB»\n:database" as DB
+
+Client -> Server : GET /api/v1/bookings/:id
+Server -> Router : app.use(/api/v1/bookings)
+Router -> Controller : getBooking(req,res)
+
+Controller -> BookingModel : findById(id)
+BookingModel -> DB : findOne({_id:id})
+DB --> BookingModel : booking data / null
+BookingModel --> Controller : booking
+
+alt booking found
+    Controller --> Router : 200 OK (JSON booking)
+else booking not found
+    Controller --> Router : 404 Not Found
+end
+
+Router --> Server : response
+Server --> Client : JSON result
+
+@enduml

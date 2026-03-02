@@ -1,0 +1,71 @@
+@startuml
+title Project #7 : Rental Car Booking - Class Diagram (UML Profile)
+
+top to bottom direction
+skinparam classAttributeIconSize 0
+
+' =========================
+' ===== ENTITY LAYER ======
+' =========================
+
+class User <<entity>> {
+  - _id : ObjectId
+  - name : String
+  - telephone : String
+  - email : String
+  - password : String
+  - role : String
+}
+
+class Provider <<entity>> {
+  - _id : ObjectId
+  - name : String
+  - address : String
+  - telephone : String
+}
+
+class Booking <<entity>> {
+  - _id : ObjectId
+  - bookingDate : Date
+  - user : ObjectId
+  - provider : ObjectId
+}
+
+User "1" -- "0..3" Booking : makes >
+Provider "1" -- "0..*" Booking : provides >
+
+' =========================
+' ===== CONTROL LAYER =====
+' =========================
+
+class AuthController <<control>> {
+  + register()
+  + login()
+  + logout()
+}
+
+class BookingController <<control>> {
+  + createBooking()
+  + getBookings()
+  + updateBooking()
+  + deleteBooking()
+}
+
+' =========================
+' ===== BOUNDARY LAYER ====
+' =========================
+
+class AuthAPI <<boundary>> {
+}
+
+class BookingAPI <<boundary>> {
+}
+
+AuthAPI --> AuthController
+BookingAPI --> BookingController
+
+BookingController --> Booking
+BookingController --> Provider
+AuthController --> User
+
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+title Manage Booking (DELETE)
+
+actor Client
+
+participant "JavaScript\n:server" as Server
+participant "«router»\n:bookings" as Router
+participant "«controller»\n:bookings" as Controller
+participant "«model»\n:Booking" as Model
+database "«MongoDB»\n:bookings" as DB
+
+Client -> Server : req.delete(/api/v1/bookings/:id)
+Server -> Router : app.use(/api/v1/bookings)
+Router -> Controller : deleteBooking(req,res)
+
+Controller -> Model : findById(req.params.id)
+Model -> DB : findOne({_id:id})
+DB --> Model : booking document
+Model --> Controller : booking
+
+Controller -> Controller : check owner/admin
+
+Controller -> Model : findByIdAndDelete(id)
+Model -> DB : deleteOne({_id:id})
+DB --> Model : delete success
+Model --> Controller : success
+
+Controller --> Router : 200 OK
+Router --> Server : response
+Server --> Client : JSON success
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+title Manage Booking (CREATE)
+
+actor Client
+
+participant "JavaScript\n:server" as Server
+participant "«router»\n:bookings" as Router
+participant "«controller»\n:bookings" as Controller
+participant "«model»\n:Provider" as ProviderModel
+participant "«model»\n:Booking" as BookingModel
+database "«MongoDB»\n:database" as DB
+
+Client -> Server : req.post(/api/v1/bookings)
+Server -> Router : app.use(/api/v1/bookings)
+Router -> Controller : createBooking(req,res)
+
+' ===== Check Provider =====
+Controller -> ProviderModel : findById(providerId)
+ProviderModel -> DB : findOne({_id:providerId})
+DB --> ProviderModel : provider document
+ProviderModel --> Controller : provider
+
+' ===== Check Booking Limit =====
+Controller -> BookingModel : countDocuments({user})
+BookingModel -> DB : count()
+DB --> BookingModel : booking count
+BookingModel --> Controller : count result
+
+' ===== Create Booking =====
+Controller -> BookingModel : save(new booking)
+BookingModel -> DB : insertOne()
+DB --> BookingModel : insert success
+BookingModel --> Controller : booking created
+
+Controller --> Router : 201 Created
+Router --> Server : response
+Server --> Client : JSON success
+
+@enduml

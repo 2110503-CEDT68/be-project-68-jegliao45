@@ -1,0 +1,44 @@
+@startuml
+title Project #7 : Rental Car Booking - Use Case Diagram
+
+left to right direction
+
+actor User
+actor Admin
+
+rectangle "Rental Car Booking System" {
+
+  (Register) as UC1
+  (Login) as UC2
+  (Logout) as UC3
+
+  (Book Rental Car) as UC4
+  (View Providers List) as UC5
+
+  (View My Bookings) as UC6
+  (Edit My Booking) as UC7
+  (Delete My Booking) as UC8
+
+  (View Any Booking) as UC9
+  (Edit Any Booking) as UC10
+  (Delete Any Booking) as UC11
+}
+
+' User connections
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+
+' Admin connections
+Admin --> UC2
+Admin --> UC3
+Admin --> UC9
+Admin --> UC10
+Admin --> UC11
+
+@enduml
